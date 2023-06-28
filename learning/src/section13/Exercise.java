@@ -694,8 +694,8 @@ class LinkedList<Item> implements Iterable<Item> {
 	}
    
 	/*
-	 * Write a method removeAfter() that takes a linked-list Node as argument and removes the node and removes
-	 * the node following the given one (and does nothing if the argument or the next field in the argument node is null)
+	 * Write a method removeAfter() that takes a linked-list Node as argument and removes the node
+	 * following the given one (and does nothing if the argument or the next field in the argument node is null)
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeAfter(Node node) {
@@ -733,6 +733,7 @@ class LinkedList<Item> implements Iterable<Item> {
 		
 	}
 	//method that returns the Node after the specified position in the list
+	// this method can be called in removeAfter(Node) method to supply the Node to delete
 	public Node getNodeAfterPos(int position){
 		
 		if(position >= 1 && position < size) {
