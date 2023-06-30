@@ -5,8 +5,8 @@ import java.util.Iterator;
 public class Exercise {
 
 	public static void main(String[] args) {
-
 		
+		MoveToFront.moveToFront(args[0]);
 	}
 
 	/*
@@ -542,18 +542,18 @@ class Queue<Item> {
  */
 //linked-list implementation
 class LinkedList<Item> implements Iterable<Item> {
-	private Node first;// first Node in a list
+	 Node first;// first Node in a list
 	private Node last; // last Node in the Queue
-	private int size; // number of items in the list
-	private Node node; // this is used to implement forEach functionality in the next()
+	int size; // number of items in the list
+	Node node; // this is used to implement forEach functionality in the next()
 
-	private class Node {
-		private Node next;
-		private Item item;
+	  class Node {
+		 Node next;
+		 Item item;
 	}
 
 	// verifies if the list is empty
-	private boolean isEmpty() {
+	 boolean isEmpty() {
 		return size == 0;
 	}
 
@@ -596,7 +596,7 @@ class LinkedList<Item> implements Iterable<Item> {
 
 	// iterator implementation
 	class ListIterator implements Iterator<Item> {
-
+     
 		@Override
 		public boolean hasNext() {
 
@@ -692,60 +692,306 @@ class LinkedList<Item> implements Iterable<Item> {
 
 		return found;
 	}
-   
+
 	/*
-	 * Write a method removeAfter() that takes a linked-list Node as argument and removes the node
-	 * following the given one (and does nothing if the argument or the next field in the argument node is null)
+	 * Write a method removeAfter() that takes a linked-list Node as argument and
+	 * removes the node following the given one (and does nothing if the argument or
+	 * the next field in the argument node is null)
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeAfter(Node node) {
-		
-		if(node != null) {
-			
+
+		if (node != null) {
+
 			int index = 0;
-		
-			//array to temporarily cache the Node items as we traverse through the list
-			Item[] items = (Item[]) new Object[size-1];
-			while(true) {
-				if(first == node) {
-					first = first.next; //thereby removing the current Node
-				     break;
-				}else {
-					items[index++] = first.item; //cache the item
+
+			// array to temporarily cache the Node items as we traverse through the list
+			Item[] items = (Item[]) new Object[size - 1];
+			while (true) {
+				if (first == node) {
+					first = first.next; // thereby removing the current Node
+					break;
+				} else {
+					items[index++] = first.item; // cache the item
 					first = first.next;
 				}
 			}
-			//refill the list
-			for(int i = items.length-1; i >= 0; i--) {
-				if(items[i] != null) {
-				Node N = new Node();
-				N.item = items[i];
-				N.next = first;
-				first = N;
+			// refill the list
+			for (int i = items.length - 1; i >= 0; i--) {
+				if (items[i] != null) {
+					Node N = new Node();
+					N.item = items[i];
+					N.next = first;
+					first = N;
+				}
+
+			}
+
+			this.node = first; // so as not to break the forEach Iterable implementation.
+		}
+
+	}
+
+	// method that returns the Node after the specified position in the list
+	// this method can be called in removeAfter(Node) method to supply the Node to
+	// delete
+	public Node getNodeAfterPos(int position) {
+
+		if (position >= 1 && position < size) {
+			Node N = first;
+			for (int i = 1; i <= position; ++i)
+				N = N.next;
+
+			return N;
+		}
+
+		return null;
+	}
+
+	/*
+	 * write a method insertAfter() that takes two linked-list Node arguments and
+	 * inserts the second after the first on its list (and does nothing if either
+	 * argument is null)
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public void insertAfter(Node nodeA, Node nodeB) {
+		
+		if (nodeA != null && nodeB != null) {
+
+			// we need to determine the initial position arrangement of the two nodes
+			int location_A = 0; // for the Node after which a Node is to be inserted
+			int location_B = 0; // for the Node that we wish to insert
+
+			Node temp = first;
+			while (true) {
+				if (temp == nodeA) {
+					++location_A; // it means 'afterNode' was initially before the Node we intend to insert after
+								// it
+					break;
+				}
+
+				else if (temp == nodeB) {
+					++location_B;// it means the Node we intend to was initially before the 'afterNode'
+					break;
+				}
+				temp = temp.next;
+			}
+
+			// Array to temporarily cache the Node items
+			Item[] items = (Item[]) new Object[size];
+			int index = 0;
+			if (location_A > 0) {
+				while (true) {
+					if (first == nodeB) {
+						first = first.next;// go to the next Node and break
+                       
+						break;
+					} else {
+						items[index++] = first.item;
+						first = first.next;
+					}
+				}
+
+			} else if (location_B > 0) {
+				
+				while (true) {
+					
+					if (first.item == nodeA.item) {
+						items[index++] = first.item;
+						first = first.next;
+						
+						break;
+					} else if (first != nodeB) {// we wouldn't want to cache the Node we intend relocating
+						items[index++] = first.item;
+						first = first.next;
+					}else
+						first = first.next;//move to the next Node if we're at the Node we want to relocate
+				}
+			}
+			// refilling the Linked-list
+			for (int i = items.length - 1; i >= 0; i--) {
+				if (items[i] != null) {
+					Node N = new Node();
+					N.item = items[i];
+					if (N.item == nodeA.item) {// if we have the Node after which we intend to insert another
+
+						Node node = new Node();//create new Node
+						node.item = nodeB.item;//insert the item we want to move to this Node
+
+						N.next = node; //make the two Nodes adjacent to each other
+						node.next = first;//join the Node to the rest of the List
+						first = N;//the beginning of the List now points to 'N'
+
+					} else {
+						N.next = first;
+						first = N;
+					}
+				}
+			}
+
+		}
+		this.node = first;//So as not to break the forEach functionality
+
+	}
+
+	// method that gets Node at a particular location in the Linked-List
+	public Node getNodeAt(int loc) {
+
+		if (loc <= size && loc > 0) {
+			Node N = first;
+			for (int i = 1; i < loc; i++)
+				N = N.next;
+
+			return N;
+		}
+
+		return null;
+	}
+	
+	/*
+	 * Write a method remove that takes a linked list and and a string key as arguments
+	 * and removes all of the nodes in the list that have key as its item field
+	 */
+	public static void remove(LinkedList<String>list, String key) {
+		
+		if(key != null && list != null) {
+			
+			//declare an array to cache items that won't be removed
+			String[] items = new String[list.size];
+			int index = 0;
+			
+			//get an Iterator for the linked-list
+			Iterator<String> iterator = list.iterator();
+			while(iterator.hasNext()) {
+				String item = iterator.next();
+				if(!item.equalsIgnoreCase(key))
+					items[index++] = item;
+			}
+			list.first = null; //remove all previous items in the list
+			list.size = 0; // list size has to be zero for a fresh count
+			for(int i = 0; i < items.length; i++)//refill the linked-list
+			{
+				if(items[i] !=null)
+					list.add(items[i]);
+			}
+			
+			
+		}
+		
+	}
+	
+	/*
+	 * Write a method max() that takes a reference to the first node
+	 * in the linked list as argument and returns the value of the maximum key in the list.
+	 * Assume that all keys are positive integers, and returns 0 if the list is empty
+	 */
+	public int max(Node firstNode) {
+		int max = 0;
+		int capacity = size;//size of our list
+		while(capacity-- > 0) {//would return the default capacity if out list was initially empty
+			int item = Integer.parseInt((String) firstNode.item);
+			firstNode = firstNode.next;
+			if(item > max)
+				max = item;
+		}
+		
+		return max;
+	}
+	
+	//method that return new Node
+	public Node node() {
+		
+		return new Node();
+	}
+	
+	@SuppressWarnings("unchecked")
+	// method that removes the first Node with the given character as item key, and returns true if it actually found such Node
+	boolean remove(char c) {
+		
+		
+		boolean alreadyExist = false;
+		
+		
+		
+		for(Node node = first; node != null; node = node.next) {
+			Item item = node.item;
+			if((Character)item == c)
+			{
+				alreadyExist = true;
+				break;
+			}
+			
+		}
+
+		 
+		if(alreadyExist) {
+			
+			 Item[] items = (Item[]) new Object[size];
+				
+				
+				int index = 0;
+				
+				//get an Iterator for the linked-list
+				Iterator<Item> iterator = iterator();
+				while(iterator.hasNext()) {
+					Item item = iterator.next();
+					if((Character)item != c)
+						items[index++] = item;
+				}
+				this.first = null; //remove all previous items in the list
+				this.size = 0; // list size has to be zero for a fresh count
+				for(int i = 0; i < items.length; i++)//refill the linked-list
+				{
+					if(items[i] !=null)
+						this.add(items[i]);
 				}
 				
 				
 			}
+		
+		return alreadyExist;
 			
-			this.node = first; // so as not to break the forEach Iterable implementation.
+			
 		}
-		
-		
-	}
-	//method that returns the Node after the specified position in the list
-	// this method can be called in removeAfter(Node) method to supply the Node to delete
-	public Node getNodeAfterPos(int position){
-		
-		if(position >= 1 && position < size) {
-			Node N = first;
-			for(int i = 1; i <= position; ++i)
-			    N = N.next;
-			
-			
-			return N;
-		}
-		
-	   return null;
-	}
+	
 	
 }
+
+/*
+ * Move-to-front. Read a sequence of characters from the standard input and maintain the characters in a linked list with no duplicates. When you read in a
+ * previously unseen character,insert it at the front of the list. When you read in a duplicate character, delete it from the list and reinsert it at the beginning. 
+ * Name your program MoveToFront: it implements the well-known 'move-to-front' strategy, which is useful for caching, data compression, and many other applications where
+ * items that have been recently accessed are more likely to be reaccessed.
+ */
+ class MoveToFront{
+	 
+	private static LinkedList<Character> linkedList = new LinkedList<Character>();
+	
+	public static void moveToFront(String s) {
+		 for(int i = 0; i < s.length(); i++) {
+			 if(!linkedList.isEmpty()) {
+				 boolean exists = linkedList.remove(s.charAt(i));//remove an item at the front and return true if such item was actually remove
+				 
+				 if(exists)
+					 insertAtBeginning(s.charAt(i));//if the item was removed,reinsert the item at the beginning of the list
+				 else
+					 linkedList.add(s.charAt(i));//if  there was no attempt at duplicate insertion, insert the incoming item at the front of the list
+			 }else
+				 linkedList.add(s.charAt(i));//this is called once; when list was empty
+		 }
+	    Iterator<Character>iterator = linkedList.iterator();
+	    while(iterator.hasNext())
+	    	System.out.println(iterator.next());
+	}
+	 
+	 private static void insertAtBeginning(char c) {
+		 LinkedList<Character>.Node node = linkedList.node();
+	     node.item = c;
+	     node.next = linkedList.first;
+	     linkedList.node = linkedList.first = node;
+	     ++linkedList.size;
+	     
+	 }
+	
+ }
