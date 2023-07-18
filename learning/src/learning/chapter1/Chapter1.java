@@ -3,58 +3,34 @@ package learning.chapter1;
 import java.util.Iterator;
 import java.util.Scanner;
 
+import javax.naming.ldap.SortControl;
+
 public class Chapter1 {
+	public static int count(int[] a) {
+		int N = a.length;
+		int count = 0;
+		for(int i = 0; i< N; i++)
+			for(int j = i+1; j< N; j++)
+				for(int k = j+1; k<N; k++)
+					if(a[i]+a[j]+a[k] == 0);
+						count++;
+		return count;
+	}
 
 	public static void main(String[] args) {
+//		System.out.println("length = "+args.length);
+//		int []a = new int[args.length];
+//		for(int i = 0; i< a.length; i++)
+//			a[i] = Integer.parseInt(args[i]);
+//		long then = System.currentTimeMillis();
+//		int count = count(a);
+//		long now = System.currentTimeMillis();
+//		System.out.println(count+", elapsed = "+(now-then)/1000.0);
 		
-		Infix inf = new Infix();
-		String infixed = inf.infix(args[0]);
-		System.out.println(infixed);
-		
-		// int x = Integer.parseInt(args[0]);
-		// System.out.println(x*4);
-
-//		Parentheses p = new Parentheses();
-//		String inputs= args[0];
-//		String[] items = inputs.split("");
-//		System.out.println("length = "+items.length);
-//		for(String item:items) {
-//			if(item.equals("-"))
-//				break;
-//			
-//			p.push(item);
-//		}
-//		boolean perfect = p.isPerfect();
-//		System.out.println(perfect== true? "Perfect": "Not perfect");
-		
-		
-		
-//		Stack<Integer> stack =new Stack<Integer>();
-//		for(int i = 0; i<5; i++)
-//			stack.push(i);
-//
-//		System.out.println("pop1 "+stack.pop());
-//		System.out.println("pop2 "+stack.pop());
-//		Check chk1 = new Check(2);
-//		int[] x = new int[2];
-//		
-//		 getCheck(chk1, x);
-//		
-//		System.out.println("chk1 with x=2 is "+chk1.getX());
-//		System.out.println(x[0]);
-		// System.out.println("\nchk2 has x= "+chk2.getX());
-
-//		int[] arr = {1,2,4,2,1,6,9,2,1,0};
-//		int[] outcome = histogram(arr, 9);
-//		int frequency = getElement(outcome, 4);
-//		System.out.println(frequency);
-//		System.out.println(factorial(5,3));
-//		
-//       boolean arr [][] = exercise(3);
-//       System.out.println(arr[0][0]);
-//	
-
+	
 	}
+
+	
 
 	/*
 	 * Method that does the array multiplications
@@ -298,202 +274,41 @@ class Check {
  * 
  */
 class Parentheses {
-	String[] arr;
-	int N;
-
-	// the index of an array
-	int index;
-
-	public Parentheses() {
-		arr = new String[2];
-	}
-
-	public void push(String item) {
-
-		increaseSize();
-		for (int i = 0; i < arr.length; i++)
-			if (arr[i] == null) {
-				arr[i] = item;
-				N++;
-				break;
-			}
-
-	}
-
-	// method that removes the perfectly enclosing parentheses and resizes the
-	// arrays
-	// for instance the method would remove () from the array of [(){ and (){} from
-	// the array of [(){}( and resizes the arrays to contain only [{ and [(
-	// respectively.
-	// Note: the arrays that are passed to this method are half the original arrays.
-	// Therefore, after the filtering and reduction, the two arrays are compared to
-	// to know if the original array is perfect
-	public String[] compareAndResize(String[] arr) {
-
-		for (index = arr.length - 1; index > 0; index--) {
-			String item = arr[index];
-			
-			switch (item) {
-			case "]": {
-				if (arr[index - 1].equals("[")) {
-					arr[index] = arr[index - 1] = null;
-					arr = decreaseSize(arr);
-					return compareAndResize(arr);
-				}
-
-			}
-				break;
-
-			case "}": {
-				if (arr[index - 1].equals("{")) {
-					arr[index] = arr[index - 1] = null;
-					arr = decreaseSize(arr);
-
-					return compareAndResize(arr);
-				}
-			}
-				break;
-
-			case ")": {
-				if (arr[index - 1].equals("(")) {
-					arr[index] = arr[index - 1] = null;
-					arr = decreaseSize(arr);
-
-					return compareAndResize(arr);
-				}
-			}
-
-			}
-		}
-
-		return arr;
-
-	}
-
-	// method that divides arrays into two equal parts and test the perfectness of
-	// the arrays
-	public boolean isPerfect() {
-
-		boolean perfect = true;
-		compact(); // removes possible initial null items in our 'arr'instance variable
-
-		if (arr.length % 2 != 0) {
-			return perfect = false;
-		}
-
-		else if (arr.length == 2) {
-			perfect = switch (arr[0]) {
-			case "(": {
-
-				yield arr[1].equals(")") ? true : false;
-			}
-			case "{": {
-				yield arr[1].equals("}") ? true : false;
-			}
-
-			case "[": {
-				yield arr[1].equals("]") ? true : false;
-			}
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + arr[0]);
-
-			};
-		} else {
-
-			String[] firstHalf = new String[arr.length / 2];
-			String[] secondHalf = new String[arr.length / 2];
-			for (int i = 0; i < secondHalf.length; i++) {
-				firstHalf[i] = arr[i];
-				secondHalf[i] = arr[secondHalf.length + i];
-			}
-
-			firstHalf = compareAndResize(firstHalf);
-			secondHalf = compareAndResize(secondHalf);
-
-			for (int i = 0; i < firstHalf.length; i++) {
-				String item1 = firstHalf[i];
-				String item2 = secondHalf[secondHalf.length - 1 - i];
-				if (item1.equals("(")) {
-					if (!(item2.equals(")"))) {
-						perfect = false;
-						break;
-					}
-				}
-
-				if (item1.equals("[")) {
-					if (!(item2.equals("]"))) {
-						perfect = false;
-						break;
-					}
-				}
-
-				if (item1.equals("{")) {
-					if (!(item2.equals("}"))) {
-						perfect = false;
-						break;
-					}
-				}
-			}
-		}
-		return perfect;
-
-	}
-
-	private void increaseSize() {
-		String[] newArr;
-		if (N == arr.length) {
-			newArr = new String[arr.length * 2];
-			for (int i = 0; i < arr.length; i++)
-				newArr[i] = arr[i];
-
-			arr = newArr;
-		}
-	}
-
-	public String[] decreaseSize(String[] arr) {
-
-		int ValidIndex = -1;
-		String[] temp = new String[arr.length - 2];
-		for (int i = 0; i < arr.length; i++) {
-			if (arr[i] != null) {
-				temp[++ValidIndex] = arr[i];
-			}
-		}
-
-		return temp;
-	}
-
+	private static final char LEFT_PAREN = '(';
+	private static final char LEFT_BRACKET = '[';
+	private static final char LEFT_BRACE = '{';
 	
-	/*
-	 * Due to the fact that our 'arr' is a dynamically resizeable one with the
-	 * effect being the pre-population of items with null values, we need a method
-	 * that can return a new array of the same items in the 'arr' except the null
-	 * values
-	 */
-	public void compact() {
-
-		// check if our 'arr' instance has at least a null item by testing the last
-		// element of the array.
-		if (arr[arr.length - 1] == null) {
-			// get the length of our 'arr' instance variable
-			int length = arr.length;
-
-			// keep track of the number of null items
-			int sumOfNulls = 0;
-			for (int i = 0; i < arr.length; i++) {
-				if (arr[i] == null)
-					++sumOfNulls;
-
-			}
-			// create new array of length of length-sumOfNulls
-			String[] newArr = new String[length - sumOfNulls];
-			for (int k = 0; k < newArr.length; k++) {
-				newArr[k] = arr[k];
-			}
-			arr = newArr;
-
-		}
-	}
+	private static final char RIGHT_PAREN = ')';
+	private static final char RIGHT_BRACKET = ']';
+	private static final char RIGHT_BRACE = '}';
+	
+    public static boolean isPerfect(String s) {
+    	Stack<Character> stack = new Stack<Character>();
+    	for(int i = 0; i< s.length(); i++) {
+    		if(s.charAt(i) == LEFT_PAREN)
+    			stack.push(LEFT_PAREN);
+    		if(s.charAt(i) == LEFT_BRACKET)
+    			stack.push(LEFT_BRACKET);
+    		if(s.charAt(i) == LEFT_BRACE)
+    			stack.push(LEFT_BRACE);
+    		
+    		if(s.charAt(i) == RIGHT_PAREN) {
+    			if(stack.isEmpty()) return false;
+    			if(stack.pop() != LEFT_PAREN) return false;
+    			
+    		}else if(s.charAt(i) == RIGHT_BRACKET) {
+    			if(stack.isEmpty()) return false;
+    			if(stack.pop() != LEFT_BRACKET) return false;
+    		}else if(s.charAt(i) == RIGHT_BRACE) {
+    			if(stack.isEmpty()) return false;
+    			if(stack.pop() != LEFT_BRACE) return false;
+    			
+    		}
+    	}
+    	
+    	return stack.isEmpty();
+    }
+	
 }
 
 // Stack implementation
@@ -520,7 +335,7 @@ class Stack<Item> implements Iterable<Item>{
 		N--;
 		return item;
 	}
-	private boolean isEmpty() {
+	public boolean isEmpty() {
 		
 		return (first ==null);
 	}
@@ -624,9 +439,10 @@ class Infix{
 		for(String s: contents)
 			infix+=s;
 		
-		for(int i = 0; i< lastClosingParentheses; i++)
+		for(int i = 0; i < lastClosingParentheses; i++)
 			infix+=")";
 		
 		return infix;
 	}
+	
 }
