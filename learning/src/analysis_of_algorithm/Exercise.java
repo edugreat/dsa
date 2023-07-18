@@ -215,8 +215,6 @@ public class Exercise {
 		return String.format("farthest pairs: %s and %s", currentFarLeft, currentFarRight);
 	}
 	
-	
-	
 	public static void commonElements(int[]a, int[]b) {
 		//I've assumed none of the arrays has duplicates
 		Arrays.sort(a);
