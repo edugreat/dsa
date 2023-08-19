@@ -42,7 +42,7 @@ public class ShufflingList {
 		
 		for(int i = 0; i < listSize;) {
 			int r = rand.nextInt(listSize);
-			if(!contains(randomArr, r))
+			if(!contains(randomArr, r)) //functionality that achieves a Set type of collection
 				randomArr[i++] = r;
 		}
 		
@@ -60,7 +60,7 @@ public class ShufflingList {
 		}
 		
 	}
-	
+	//utility method to achieve a Set type of collection
 	private static boolean contains(Integer[]a, Integer i) {
 
 		for(Integer x: a)
