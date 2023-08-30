@@ -1,0 +1,13 @@
+ Give the list of positions in a heap of size 31 where the kth largest (i) can appear and, (ii) cannot appear,for k=2,3,4(assuming the values to be distinct).
+                                              (i)
+For k=2: the postion occurs at the index = 2*1 or 2*1+1 ie at index = 2 or 3. Where the root is at the index = 1.
+For k=3: the position occurs at the index (2*2 or 2*2+1) or(2*3 or 2*3+1). ie at the index 4 or 5 or 6 or 7 for root = 2 or 3.
+For k=4: the position occurs at the index (2*4 or 2*4+1) or (2*5 or 2*5+1) or (2*6 or 2*6+1) or (2*7 or 2*7+1).ie at the index 8 or 9 or 10 or 11 or 12 or 13 or 14 or15 for root =4 or 5 or 6 or 7.
+                                             (ii)
+For k =2: the postion would not occur at any index x where x > 3 for root = 1.
+For k=3: the position would not occur at any index x where x > 5 for root = 2 and x > 7 for root = 3.
+For k=4: the position would not occur at any index x where x > 9 for root = 4 and x > 11 for root =5 and x > 13 for root =6 and x >	15 for root = 7.	
+
+
+NOTE: The same answers hold true for minimum type priority queue implementaion.							 
+											 
