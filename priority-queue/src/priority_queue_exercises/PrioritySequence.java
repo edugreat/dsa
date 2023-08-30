@@ -99,7 +99,7 @@ public class PrioritySequence<Key extends Comparable<Key>> {
 			int j = 2*i;
 			
 			//check if the left child is less than its right sibling
-			if(less(j, j+1))
+			if(j < N && less(j, j+1))
 				j++;
 			
 			//break out of the loop if the parent node is greater than the child node

@@ -1,0 +1,41 @@
+Draw all of the diferent heaps that can be made from the five keys A B C D E,then draw all the different heaps that can be made from the five keys A A A B B.
+
+For keys  A B C D E:
+starting with index = 1. The children of root whose index is at x would occur at the index 2*x and 2*x+1.
+For max priority queue, the queue arrangement would be 
+
+                              E
+							  ' '
+							 '    '
+							D       B
+							' '
+						   '    '    
+						   A     C
+						   
+For min priority queue:
+                               A
+							  ' '
+							 '    '
+							B       C
+							' '
+						   '    '    
+						   D     E
+					
+For keys A A A B B
+max priority queue:
+                               
+                               B
+							  ' '
+							 '    '
+							B      A
+							' '
+						   '    '    
+						   A    A
+min prioriry queue:
+                               A
+							  ' '
+							 '    '
+							A       A
+							' '
+						   '    '    
+						   B     B
