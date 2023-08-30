@@ -40,7 +40,7 @@ public class Exercise2<Key extends Comparable<Key>> {
 	
 	private boolean less(int i, int j) {
 		
-		return pq[i].compareTo(pq[j]) == -1;
+		return pq[i].compareTo(pq[j]) < 0;
 	}
 	
 	private void exchange(int i, int j) {
@@ -134,7 +134,7 @@ public class Exercise2<Key extends Comparable<Key>> {
 	  System.out.println(pq);
 	  
 		
-	  // the output shows the items in the priority queue was of the arrangement: [ E, N, O, I, T, S, E, U, Q, Y, S, A ]
+	  // the output shows the items in the priority queue was of the arrangement: [ Y, U, T, S, S, Q, O, N, I, E, E, A ]
 	}
 	
 }

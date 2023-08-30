@@ -68,7 +68,7 @@ public class PrioritySequence<Key extends Comparable<Key>> {
 	
 	private boolean less(int i,int j) {
 		
-		return pq[i].compareTo(pq[j]) == -1;
+		return pq[i].compareTo(pq[j]) < 0;
 	}
 	
 	private void exchange(int i, int j) {
@@ -140,6 +140,6 @@ public class PrioritySequence<Key extends Comparable<Key>> {
 			}
 		}
 		
-		//it shows that the output is: P O R I I T Y R Q E U U 
+		//it shows that the output is: R R P P T Y Y O U U Q U
 	}
 }
