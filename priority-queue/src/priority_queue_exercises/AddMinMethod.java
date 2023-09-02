@@ -1,17 +1,12 @@
 package priority_queue_exercises;
 
-/*
- * Give the heap that results when the keys E A S Y Q U E S T  I O N 
- * are inserted in that order into an initially empty max-oriented heap
- */
 @SuppressWarnings("unchecked")
-public class Exercise2<Key extends Comparable<Key>> {
-
+public class AddMinMethod <Key extends Comparable<Key>> {
 	private int N;
 	private Key[]pq;
 	private static final int INITIAL_SIZE = 10;
 	
-	public Exercise2() {
+	public AddMinMethod() {
 		pq = (Key[])new Comparable[INITIAL_SIZE];
 	}
 	
@@ -98,41 +93,11 @@ public class Exercise2<Key extends Comparable<Key>> {
 		return k;
 	}
 	
-	//method that displays the internal arrangements of the queue
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
+	//returns the element with the minimum key in the priority queue
+	private Key min() {
 		
-		builder.append("[ ");
-		
-		while(! isEmpty()) {
-			
-			if(size() > 1) {
-				builder.append(delMax()).append(", ");
-			}
-			else
-			
-			builder.append(delMax());
-		}
-			
-		
-		return builder.append(" ]").toString();
+		return pq[N];
 	}
 	
-	public static void main(String[] args) {
-		
-		
-		String[] c = {"E","A","S","Y","Q","U","E","S","T","I","O","N"};
-
-		Exercise2<String> pq = new Exercise2();
-	  for(String ch: c) {
-		  pq.put(ch);
-	  }
-	  
-	  System.out.println(pq);
-	  
-		
-	  // the output shows the items in the priority queue was of the arrangement: [ Y, U, T, S, S, Q, O, N, I, E, E, A ]
-	}
 	
 }
