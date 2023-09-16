@@ -84,5 +84,11 @@ public class MatrixSort<Item extends Comparable<Item>> {
 		MatrixSort<Integer> m = new MatrixSort<>(items);
 		
 		System.out.println(m);
-	}
+		
+		String[][] a = {{"Abia", "Umuahia"}, {"Adamawa", "Yola"}, {"Akwaibom", "Uyo"}, {"Anambra", "Awka"}};
+		
+		MatrixSort<String> m0 = new MatrixSort<>(a);
+		System.out.println(m0);
+		
+ 	}
 }
