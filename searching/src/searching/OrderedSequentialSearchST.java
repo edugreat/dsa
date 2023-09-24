@@ -1,4 +1,8 @@
 package searching;
+
+import java.util.PriorityQueue;
+import java.util.Queue;
+
 /*
  * Develop a symbol-table implementation 'OrderedSequentialSearchST' that uses an ordered linked list as the underlying data structure to implement our ordered symbol-table API.
  */
@@ -35,11 +39,11 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	}
 	
 	//the rank of a key is the number of keys less than or equal to the key
-	//this also can the be the actual position of the key in a sorted scenario
+	//this also can be the actual position of the key in a sorted scenario
 	private int rank(Key key) {
 		int i = 0;
 		for(Node node = top; node != null; node = node.next) {
-			if(key.compareTo(node.key) > 0)
+			if(node.value != null && key.compareTo(node.key) > 0)
 				i++;
 		}
 		
@@ -143,6 +147,8 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//simply associates the given key with a null value
 	public void delete(Key key) {
 		
+		boolean isMin = isSame(key, select(0));//checks if the intended key to delete is the minimum key
+		
 		for(Node node = top; node != null; node = node.next) {
 			if(isSame(key, node.key)) {
 				node.value = null;
@@ -151,9 +157,14 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 			}
 		}
 		
-		//if the key just deleted is the maximum key, computes the next maximum
+		//if the key just deleted was the maximum key, computes the next maximum
 		if(isSame(key, maximum.key))
 			nextMax();
+		
+		//if the deleted key was minimum key, recompute the minimum key
+		if(isMin)
+			nextMin();
+		
 	}
 	
 	//the contains method checks if there is any such associated with a non null value
@@ -178,6 +189,17 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		return maximum.key;
 	}
 	
+	//recomputes the next node with the minimum key assuming the minimum key was deleted
+	private void nextMin() {
+		
+		for(Node node = top; node != null; node = node.next)
+			if(node.value != null) {
+				top = node;
+				break;
+			}
+				
+	}
+	
 	//private method that computes the next maximum key after current maximum key is being deleted
 	private void nextMax() {
 		
@@ -187,6 +209,102 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		
 		
 	}
+	
+	//the floor method returns the largest key less than or equal to the given key
+	public Key floor(Key key) {
+		//assigns node whose key is less than or equal to the given key
+		//and whose value is not null to 'theFloor' variable
+		Node theFloor = null;
+		for(Node node = top; node != null; node = node.next) {
+			if(node.value != null && node.key.compareTo(key) <= 0)
+				theFloor = node;
+		}
+		return theFloor.key;
+	}
+	
+	//returns the smallest key greater than or equal to the given key
+	public Key ceiling(Key key) {
+		
+		for(Node node = top; node != null; node = node.next) {
+			if(node.value != null && node.key.compareTo(key) >= 0)
+				return node.key;
+		}
+		
+		return null;
+	}
+	
+	//Gets the key with the given rank
+	public Key select(int i) {
+		
+		if(i > N) return null;
+		if(i == 0) return top.key;
+		
+		int rank = 0;
+		Node node = top;
+		while(node.next != null) {
+			if(node.value != null && rank < i) ++rank;
+			if(rank == i) {
+				node = node.next;
+				break;
+			}
+			node = node.next;
+			
+		}
+		
+		return node.key;
+		
+		
+	}
+	
+	public void delMax() {
+		
+		//calls the delete method to take care of this deletion.
+		delete(maximum.key);
+	}
+	
+	//deletes the smallest key in the symbol table
+	public void delMin() {
+		//calls the delete method to handle this process
+		delete(min());
+	}
+	
+	//returns the number of keys between lo..hi
+	public int size(Key lo, Key hi) {
+      
+		int rankLo = rank(lo);
+		int rankHi = rank(hi);
+		if(rankLo > rankHi) return 0;
+		
+		return rankHi - rankLo - 1;
+
+		
+	}
+	
+	//returns an iterable of keys between the range
+	public Iterable<Key> keys(Key k1, Key k2){
+		Queue<Key> queue = new PriorityQueue<Key>();
+		int r1 = rank(k1);
+		int r2 = rank(k2);
+		for(int i = r1+1; i < r2; i++) {
+			queue.add(select(i));
+		}
+		
+		return queue;
+	}
+	
+	//returns an iterable of all keys in the table
+    public Iterable<Key> keys(){
+    	
+    	Queue<Key> all = new PriorityQueue<>();
+    	
+    	for(Node node = top; node != null; node = node.next)
+    	 if(node.value != null)
+    		 all.add(node.key);
+    	
+    	return all;
+    	
+    }
+    
 	public static void main(String[] args) {
 		OrderedSequentialSearchST<Integer, String> ST = new OrderedSequentialSearchST<>();
 		Integer[] keys = {10,4,6,0,1,7,11};
@@ -195,20 +313,10 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 			
 			ST.put(keys[i], vals[i]);
 		}
-
-		System.out.println(ST.contains(0));
-		ST.delete(0);
-		System.out.println(ST.contains(0));
-		System.out.println(ST.contains(6));
-		System.out.println(ST.contains(11));
-		System.out.println("minimum key = "+ST.min());
-		System.out.println("maximum key = "+ST.max());
-		ST.delete(11);
-		System.out.println("maximum key = "+ST.max());
-		ST.delete(10);
-		System.out.println("maximum key = "+ST.max());
-		//System.out.println(ST.get(11));
 		
+	
+		Iterable<Integer> iterable = ST.keys();
+		iterable.forEach(x -> System.out.print(x+" "));
 		
 	}
 }
