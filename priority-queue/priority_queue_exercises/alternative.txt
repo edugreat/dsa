@@ -1,0 +1,44 @@
+Describe a way to avoid the j < N test in the sink().
+
+The needed modification in the sink() method would be
+private void sink(int index){
+
+while(2* index < N){
+
+int j = 2 * index;
+if(less(j, j+1))
+  j++;
+  
+  if(!less(index, j))
+  break;
+                                                                      
+  
+  exchange(index, j);
+  
+  index*=2;
+  
+
+}
+}
+
+
+
+BEFORE MODIFICATION:
+
+while(2* index <= N){
+
+int j = 2 * index;
+if(j < N && less(j, j+1))
+  j++;
+  
+  if(!less(index, j))
+  break;
+  
+  
+  exchange(index, j);
+  
+  index*=2;
+  
+
+}
+}

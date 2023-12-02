@@ -9,7 +9,7 @@ import java.util.List;
 public class LinkedListSort {
 
 	public static void main(String[] args) {
-	
+		
 	}
 	
 	
@@ -35,7 +35,7 @@ public class LinkedListSort {
 	 
  }
  
- private static <T extends Comparable<T>> void merge(List<T> orignal, List<T> leftHalf, List<T> rightHalf) {
+ private static <T extends Comparable<T>> void merge(List<T> original, List<T> leftHalf, List<T> rightHalf) {
 	
 	 int x = 0;//for leftHalf list
 	 int y = 0;//for rightHalf list
@@ -43,16 +43,16 @@ public class LinkedListSort {
 	
 	 while(x < leftHalf.size() && y < rightHalf.size()) {
 		 if(lessOrEquals(leftHalf.get(x), rightHalf.get(y)))
-			 orignal.set(z++, leftHalf.get(x++));
+			 original.set(z++, leftHalf.get(x++));
 		 else
-			 orignal.set(z++, rightHalf.get(y++));
+			 original.set(z++, rightHalf.get(y++));
 	 
 	 }
 	 while(x < leftHalf.size())
-		 orignal.set(z++, leftHalf.get(x++));
+		 original.set(z++, leftHalf.get(x++));
 	 
 	 while(y < rightHalf.size())
-		 orignal.set(z++, rightHalf.get(y++));
+		 original.set(z++, rightHalf.get(y++));
  }
  
  private static <T extends Comparable<T>> boolean lessOrEquals(T a, T b) {
