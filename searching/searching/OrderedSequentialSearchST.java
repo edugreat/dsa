@@ -8,7 +8,7 @@ import java.util.Queue;
  */
 public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 
-	private Node top;//reference to the top node
+	private Node tail;//reference to the node at the beginning. This node is actually dynamic
 	private Node first;//reference to the node first none(top) as in a queue-type implementation
 	private Node last;//reference to the last node(as in a queue-type implementation
 	
@@ -42,7 +42,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//this also can be the actual position of the key in a sorted scenario
 	private int rank(Key key) {
 		int i = 0;
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(node.value != null && key.compareTo(node.key) > 0)
 				i++;
 		}
@@ -61,7 +61,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		
 		if(key == null)return null;
 		
-		for(Node node = top;  node!=null; node = node.next) {
+		for(Node node = tail;  node!=null; node = node.next) {
 			if(isSame(key, node.key)) return node.value;
 		}
 		
@@ -69,7 +69,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	}
 	
 	//the position() determines the position of a key using its rank
-	//it form a queue of nodes from the beginning of the ST to the rank.
+	//it forms a queue of nodes from the beginning of the ST to the rank.
 	//this queue is later attached to the original ST after key whose rank(or position) is 'rank' has been attached to the ST
 	private void position(int rank) {
 		
@@ -78,16 +78,16 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 			
 			//form a queue of all keys from the beginning of the ST to the 'rank'
 			if(first == null) {
-				first = new Node(top.key, top.value, null);
+				first = new Node(tail.key, tail.value, null);
 				last = first;
-				top = top.next;
+				tail = tail.next;
 				continue;
 			}
 			
-			Node node = new Node(top.key, top.value, null);
+			Node node = new Node(tail.key, tail.value, null);
 			last.next = node;
 			last = node;
-			top = top.next;
+			tail = tail.next;
 		}
 	}
 	
@@ -101,14 +101,14 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		if(key == null)return;
 		
 		if(isEmpty()) {
-			top = new Node(key, val, null);
-			maximum = top;
+			tail = new Node(key, val, null);
+			maximum = tail;
 			N++;
 			return;
 		}
 		
 		
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(isSame(key, node.key)) {
 				node.value = val;
 				N++;
@@ -121,8 +121,8 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		//then its position is at the front of the ST
 		if(r == 0) {
 			Node node = new Node(key, val, null);
-			node.next = top;
-			top = node;
+			node.next = tail;
+			tail = node;
 			N++;
 			return;
 		}
@@ -131,10 +131,10 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		//the position of the key is in-between the first and last node of the ST
 		position(r);//splits the ST into two(from the rank to beginning and from the rank to the end of the ST)
 		Node node = new Node(key, val, null);//creates new node with the new key-value pair
-		node.next = top;//attaches the new key-value of node to the right side of the ST resulted from the call to position()
+		node.next = tail;//attaches the new key-value of node to the right side of the ST resulted from the call to position()
 		last.next = node;//attaches the remaining left side of the ST the newly added key-value pair
 		
-		top = first;//returns the ST to a queue based implementation
+		tail = first;//returns the ST to a queue based implementation
 		N++;
 		first = null;//sets the node to its default for next possible operation
 	
@@ -149,7 +149,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		
 		boolean isMin = isSame(key, select(0));//checks if the intended key to delete is the minimum key
 		
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(isSame(key, node.key)) {
 				node.value = null;
 				N--;
@@ -170,7 +170,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//the contains method checks if there is any such associated with a non null value
 	public boolean contains(Key key) {
 		
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(isSame(key, node.key))
 				return node.value != null;
 		}
@@ -180,7 +180,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	
 	//return the minimum key
 	public Key min() {
-		return top.key;
+		return tail.key;
 	}
 	
 	//returns the maximum key
@@ -192,9 +192,9 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//recomputes the next node with the minimum key assuming the minimum key was deleted
 	private void nextMin() {
 		
-		for(Node node = top; node != null; node = node.next)
+		for(Node node = tail; node != null; node = node.next)
 			if(node.value != null) {
-				top = node;
+				tail = node;
 				break;
 			}
 				
@@ -203,7 +203,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//private method that computes the next maximum key after current maximum key is being deleted
 	private void nextMax() {
 		
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(node.value != null) maximum = node;//iterates through a sorted ST, assigning the maximum to each node until the last node whose value is not null
 		}
 		
@@ -215,7 +215,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 		//assigns node whose key is less than or equal to the given key
 		//and whose value is not null to 'theFloor' variable
 		Node theFloor = null;
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(node.value != null && node.key.compareTo(key) <= 0)
 				theFloor = node;
 		}
@@ -225,7 +225,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	//returns the smallest key greater than or equal to the given key
 	public Key ceiling(Key key) {
 		
-		for(Node node = top; node != null; node = node.next) {
+		for(Node node = tail; node != null; node = node.next) {
 			if(node.value != null && node.key.compareTo(key) >= 0)
 				return node.key;
 		}
@@ -237,10 +237,10 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
 	public Key select(int i) {
 		
 		if(i > N) return null;
-		if(i == 0) return top.key;
+		if(i == 0) return tail.key;
 		
 		int rank = 0;
-		Node node = top;
+		Node node = tail;
 		while(node.next != null) {
 			if(node.value != null && rank < i) ++rank;
 			if(rank == i) {
@@ -297,7 +297,7 @@ public class OrderedSequentialSearchST<Key extends Comparable<Key>, Value> {
     	
     	Queue<Key> all = new PriorityQueue<>();
     	
-    	for(Node node = top; node != null; node = node.next)
+    	for(Node node = tail; node != null; node = node.next)
     	 if(node.value != null)
     		 all.add(node.key);
     	
