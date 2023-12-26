@@ -91,6 +91,18 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		return x.key;
 	}
 	
+	//get the maximum node of a subtree non-recursively
+	private Node max(Node node) {
+		
+		Node x = node;
+		while(x.right != null) x = x.right;
+		
+		
+		
+		
+		return x;
+	}
+	
 	private Node floorOf(Key key) {
 		//local integer variable for the compareTo
 		int cmp;
@@ -233,7 +245,57 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		return rankOf(key);
 	}
 	
+	//deletion implementation
+	private Node delete(Node x, Key key) {
+		
+		//return null if tree is empty
+		if(x == null) return null;
+		int cmp = compare(key, x.key);
+		
+		if(cmp < 0) x.left = delete(x.left, key);//go left if the key is less than current parent key
+		else if(cmp > 0) x.right = delete(x.right, key); //go right if key is greater than current parent key
+		else {//we're at the key intended for deletion
+			//return right link if left link is null, return left link if right link is null
+			if(x.left == null) return x.right;
+			if(x.right == null) return x.left;
+			
+			//the link has non-null left and right branches
+			Node l = x.left;//reference to the left branch
+			Node r = x.right;//reference to the right branch
+			//get the maximum left key that should replace the key we intend deleting
+			Node max = max(l);
+			
+			//delete the just returned max node from the original subtree
+			l = deleteMax(l, max.key);
+			//attach 'l' to the left link of 'max' variable
+			max.left = l;
+			//attach 'r' the right link of max
+			max.right = r;
+			
+		}
+		
+		//recomputes the node size up to the root node
+		x.N = size(x.left)+size(x.right)+1;
+		
+		//returns the root node
+		return x;
+	}
 	
+	public void delete(Key key) {
+		
+		root = delete(root, key);
+	}
+	
+	private Node deleteMax(Node x, Key key) {
+		
+		if(x.right == null) return x.left;
+		else x.right = deleteMax(x.right, key);
+		
+		x.N = size(x.left) + size(x.right) +1;//recomputes the node size
+		
+		return x;
+	}
+
 	public static void main(String[]args) {
 		
 		String in = "ADEQJMTS";
@@ -242,12 +304,11 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		for(String s: keys)
 			bst.put(s, s.toLowerCase());
 		
-
 		
 		System.out.printf("%-2s %4s %6s %8s %10s %12s %14s %16s", "rank", "value", "select", "value", "floor", "value", "ceiling","value\n");
 		for(int i = 0; i<keys.length; i++) {
-		System.out.printf("%-2s %4d %6s %8s %10s %12s %14s %16s", 
-				keys[i], bst.rank(keys[i]), keys[i], bst.select(i), keys[i], bst.floor(keys[i]), keys[i], bst.ceiling(keys[i])+"\n");				
+		System.out.printf("%-2s %4d %6d %8s %10s %12s %14s %16s", 
+				keys[i], bst.rank(keys[i]), i, bst.select(i), keys[i], bst.floor(keys[i]), keys[i], bst.ceiling(keys[i])+"\n");				
 		}
 		
 		
