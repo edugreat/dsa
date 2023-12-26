@@ -97,7 +97,7 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		//a pointer to the root node
 		 Node x = root;
 		 //initialize a node to null value
-		 Node temp = null;
+		 Node tempFloor = null;
 		 //iterate until current node is null
 		 while(x != null) {
 			 //compare the key of interest with to the key of current parent node
@@ -113,7 +113,7 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 				 * we couldn't get any other key along the left link that is greater than the key 
 				 * variable 
 				 */
-				temp = x;
+				tempFloor = x;
 				x = x.left;
 				
 			}
@@ -122,7 +122,7 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		 //if the variable x is null, then return temp
 		 //if x is null, it means the argument 'x' does not exist in the binary tree,
 		 //then return it floor
-		 return (x == null ? temp : x);
+		 return (x == null ? tempFloor : x);
 	}
 	
 	//non recursive floor implementation
@@ -138,7 +138,7 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		//get a pointer to the root node
 		Node x = root;
 		
-		Node temp = null;
+		Node tempCeiling = null;
 		//an integer value of compareTo result
 		int cmp;
 		//iterate loop while node is non-null
@@ -149,18 +149,20 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 			//break from the loop if we're at the node whose key we're interested in the ceiling
 			if(cmp == 0)break;
 			//if the current parent node has key greater than the key argument, loop to left
-			if(cmp > 0) x = x.left;
+			else if(cmp > 0) x = x.left;
 			
 			//if the current parent node has key less than key argument, initialize temp to null
 			//this would definitely be the node with the key less than key argument
 			//if we didn't get any other key less than key argument along the right link
 			else {
-				temp = x;
+				tempCeiling = x;
+				
 				x = x.right;
+				
 			}
 		}
 		
-		return (x == null ? null : temp);
+		return (x == null ? tempCeiling : x);
 	}
 	
 	public Key ceiling(Key key) {
@@ -240,18 +242,14 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		for(String s: keys)
 			bst.put(s, s.toLowerCase());
 		
-//		System.out.println("min = "+bst.min());
-//		System.out.println("max = "+bst.max());
-//		System.out.println("select(5) "+bst.select(5));
-//		System.out.println("rank(Q) "+bst.rank("Q"));
-//		
+
+		
 		System.out.printf("%-2s %4s %6s %8s %10s %12s %14s %16s", "rank", "value", "select", "value", "floor", "value", "ceiling","value\n");
 		for(int i = 0; i<keys.length; i++) {
 		System.out.printf("%-2s %4d %6s %8s %10s %12s %14s %16s", 
 				keys[i], bst.rank(keys[i]), keys[i], bst.select(i), keys[i], bst.floor(keys[i]), keys[i], bst.ceiling(keys[i])+"\n");				
 		}
 		
-		//System.out.println("floor(Y) " +bst.floor("Y"));
-		System.out.println("ceiling(Y)"+ bst.ceiling("Y"));
+		
 	}
 }
