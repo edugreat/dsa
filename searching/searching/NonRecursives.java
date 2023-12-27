@@ -36,6 +36,9 @@ public class NonRecursives<Key extends Comparable<Key>, Value> {
 		if(cmp < 0) node.left = put(node.left, key, val);
 		//add to right if key of incoming node is greater than root key
 		else if(cmp > 0) node.right = put(node.right, key, val);
+		//this is the case of updating value of current existing node
+		else node.val = val;
+		
 		
 		//update the counts node counts
 		node.N = size(node.left) + size(node.right) +1;
