@@ -1,0 +1,384 @@
+package searching;
+
+
+/*
+ * Modify BST to keep the most recently accessed node in an instance
+ * variable so that it can be accessed in constant time if the next put() or get()
+ * uses the same key
+ */
+public class BSTWITHCACHE<Key extends Comparable<Key>, Value> {
+	private Node root;
+	
+	private Node cached;
+	
+	
+	
+	private class Node{
+		
+		private int N;
+		private Node left, right;
+		private Key key;
+		private Value val;
+		
+		public Node(Key key, Value val, int N) {
+			this.key = key;
+			this.val = val;
+			this.N = N;
+		}
+	}
+
+	//return the comparison of two node keys
+	private int compare(Key k1, Key k2) {
+		
+		return k1.compareTo(k2);
+	}
+	
+	//implements the put method to add to the binary tree
+	private Node put(Node node, Key key, Value val) {
+		
+		//if the node is non-existent, simply add new node and return it
+		if(node == null) {
+			
+			Node newNode = new Node(key, val, 1);
+			cached = newNode;//update the cached item to reference the newly created node.
+			return node = newNode;
+		}
+		
+		//compare the key of the incoming node with the ones already in existence
+		int cmp = compare(key, node.key);
+		//add to left if key of incoming node is less than the current root key
+		if(cmp < 0) node.left = put(node.left, key, val);
+		//add to right if key of incoming node is greater than root key
+		else if(cmp > 0) node.right = put(node.right, key, val);
+		
+		//this is the case of updating value of current existing node
+		else node.val = val;
+		
+		//update the counts node counts
+		node.N = size(node.left) + size(node.right) +1;
+		
+		return node;
+		
+		
+	}
+	
+	//the put() implements in constant time with the use of cache instance variable
+	public void put(Key key, Value val) {
+		//if the item we intend to insert is same as the cached item, then update the cache item
+		//in constant time complexity
+		if(cached != null && compare(key, cached.key) == 0) {
+			cached.val = val;
+			
+			
+			return;
+		}
+		
+		root = put(root, key, val);
+		
+		return;
+	}
+
+	//implements the size method
+	private int size(Node node) {
+		
+		if(node == null) return 0;
+		return node.N;
+	}
+	
+	public int size() {
+		
+		return size(root);
+	}
+	
+	
+	//non recursive min() implementation
+	public Key min() {
+		
+		Node x = root;
+		//keep going to left until left link is null, then return key of node whose left link is null
+		while(x.left != null) {
+			
+			x = x.left;
+		}
+		
+		return x.key;
+	}
+	
+	//non recursive max() implementation
+	public Key max() {
+		
+		Node x = root;
+		//keep going to right until node whose right link is null, then return its key as the largest key
+		while(x.right != null) {
+			
+			x = x.right;
+		}
+		
+		return x.key;
+	}
+	
+	//get the maximum node of a subtree non-recursively
+	private Node max(Node node) {
+		
+		Node x = node;
+		while(x.right != null) x = x.right;
+		
+		
+		
+		
+		return x;
+	}
+	
+	private Node floorOf(Key key) {
+		//local integer variable for the compareTo
+		int cmp;
+		//a pointer to the root node
+		 Node x = root;
+		 //initialize a node to null value
+		 Node tempFloor = null;
+		 //iterate until current node is null
+		 while(x != null) {
+			 //compare the key of interest with to the key of current parent node
+			cmp = compare(x.key, key);
+			//if the keys are the same, break out of the loop
+			if(cmp == 0) break;
+			//if the current parent node's key is less than the key of interest, loop right
+			if(cmp < 0 ) x = x.right;
+			else {
+				/*
+				 * initialize temp to the current node. This would definitely be 
+				 * the node with the key representing the floor of the key argument if
+				 * we couldn't get any other key along the left link that is greater than the key 
+				 * variable 
+				 */
+				tempFloor = x;
+				x = x.left;
+				
+			}
+			 
+		 }
+		 //if the variable x is null, then return temp
+		 //if x is null, it means the argument 'x' does not exist in the binary tree,
+		 //then return it floor
+		 return (x == null ? tempFloor : x);
+	}
+	
+	//non recursive floor implementation
+	public Key floor(Key key) {
+		
+		Node x = floorOf(key);
+		
+		return (x == null ? null : x.key);
+	}
+ //non recursive implementation of ceiling
+	private Node ceilingOf(Key key) {
+		
+		//get a pointer to the root node
+		Node x = root;
+		
+		Node tempCeiling = null;
+		//an integer value of compareTo result
+		int cmp;
+		//iterate loop while node is non-null
+		while(x != null) {
+			
+			//compare the key with the current parent node
+			cmp = compare(x.key, key);
+			//break from the loop if we're at the node whose key we're interested in the ceiling
+			if(cmp == 0)break;
+			//if the current parent node has key greater than the key argument, loop to left
+			else if(cmp > 0) x = x.left;
+			
+			//if the current parent node has key less than key argument, initialize temp to null
+			//this would definitely be the node with the key less than key argument
+			//if we didn't get any other key less than key argument along the right link
+			else {
+				tempCeiling = x;
+				
+				x = x.right;
+				
+			}
+		}
+		
+		return (x == null ? tempCeiling : x);
+	}
+	
+	public Key ceiling(Key key) {
+		
+		Node x = ceilingOf(key);
+		
+		return (x == null ? null : x.key);
+	}
+	
+	//non recursive select()
+	private Node selectFor(int r) {
+		//get reference to the root node
+		Node x = root;
+		//number of left children for the current parent node
+		int leftChild;
+		int rank = r;
+		
+		//iterate while current is still non-null
+		while(x  != null) {
+			//get the number of left children
+			leftChild = size(x.left);
+			//leftChild == r break out of the loop
+			if(leftChild == rank) break;
+			if(leftChild > rank) {
+				//if the current leftChild rank, search towards the left of the binary search tree
+				x = x.left;
+			}else {
+				//decrement the rank by the number of current left children and search to the right
+				rank -= (leftChild+1);
+				x = x.right;
+			}
+		}
+		
+		return x;
+	}
+	
+	public Key select(int r) {
+		Node x = selectFor(r);
+		
+		return (x == null ? null : x.key);
+	}
+	
+	private Node get(Node x, Key key) {
+		
+		//return null if such node does not exist
+		if(x == null) return null;
+		int cmp = compare(key, x.key);
+		if(cmp == 0) {
+			cached = x;//update cached item to reference to newly accessed node
+			
+			 return x;
+		}
+		else if(cmp < 0) return get(x.left, key);
+		else return get(x.right, key);
+	}
+	
+	
+	//get the get() method implemented to retrieve a value in constant time using a cached instance variable
+	public Value get(Key key) {
+		
+		//retrieve cached item if the argument is the same as the cached item.
+		//this ensures that the get() method is perform in constant time.
+		if(cached != null && compare(cached.key, key) == 0) {
+			
+			return cached.val;
+		}
+		
+		Node x = get(root, key);
+		
+		
+		return (x == null ? null : x.val);
+		
+	}
+	//non recursive implementation of rank
+	private int rankOf(Key key) {
+		
+		//reference to the root node
+		Node x = root;
+		int cmp;
+		int leftChild = 0;
+		//iterate while node is non-null
+		while(x!= null) {
+			cmp = compare(key, x.key);
+			if(cmp == 0) return leftChild + size(x.left); //return number of left children
+			
+				if(cmp < 0) x = x.left;
+				else {
+					leftChild = leftChild+size(x.left) +1;//add the previous leftChildren to the current size of left children, then loop towards right
+					x = x.right;
+				
+			}
+		}
+		
+		return leftChild;//return this value since the key argument is not yet in the binary search tree. This is value of the rank if the key was present
+	}
+	
+	public int rank(Key key) {
+		
+		return rankOf(key);
+	}
+	
+	//deletion implementation
+	private Node delete(Node x, Key key) {
+		
+		//return null if tree is empty
+		if(x == null) return null;
+		int cmp = compare(key, x.key);
+		
+		if(cmp < 0) x.left = delete(x.left, key);//go left if the key is less than current parent key
+		else if(cmp > 0) x.right = delete(x.right, key); //go right if key is greater than current parent key
+		else {//we're at the key intended for deletion
+			//return right link if left link is null, return left link if right link is null
+			if(x.left == null) return x.right;
+			if(x.right == null) return x.left;
+			
+			//the link has non-null left and right branches
+			Node l = x.left;//reference to the left branch
+			Node r = x.right;//reference to the right branch
+			//get the maximum left key that should replace the key we intend deleting
+			Node max = max(l);
+			
+			//delete the just returned max node from the original subtree
+			l = deleteMax(l, max.key);
+			//attach 'l' to the left link of 'max' variable
+			max.left = l;
+			//attach 'r' the right link of max
+			max.right = r;
+			
+		}
+		
+		//recomputes the node size up to the root node
+		x.N = size(x.left)+size(x.right)+1;
+		
+		//returns the root node
+		return x;
+	}
+	
+	public void delete(Key key) {
+		
+		root = delete(root, key);
+	}
+	
+	private Node deleteMax(Node x, Key key) {
+		
+		if(x.right == null) return x.left;
+		else x.right = deleteMax(x.right, key);
+		
+		x.N = size(x.left) + size(x.right) +1;//recomputes the node size
+		
+		return x;
+	}
+	
+	/*
+	 * write a recursive method isOrdered() that takes a Node and two keys min and max as
+	 * arguments and returns true if all the keys in the tree are between min and max:
+	 * min and max are indeed the smallest and largest keys in the tree, respectively;
+	 * and the BST ordering property holds for all
+	 * property holds for all keys in tree; false otherwise 
+	 */
+	
+	
+	
+	public static void main(String[] args) {
+		
+		String in = "ADEQJMTS";
+		BSTWITHCACHE<String, String> bst = new BSTWITHCACHE<>();
+		String[] keys = in.split("");
+		for(String s: keys)
+			bst.put(s, s.toLowerCase());
+		
+	
+		System.out.printf("%-2s %4s %6s %8s %10s %12s %14s %16s", "rank", "value", "select", "value", "floor", "value", "ceiling","value\n");
+		for(int i = 0; i<keys.length; i++) {
+		System.out.printf("%-2s %4d %6d %8s %10s %12s %14s %16s", 
+				keys[i], bst.rank(keys[i]), i, bst.select(i), keys[i], bst.floor(keys[i]), keys[i], bst.ceiling(keys[i])+"\n");				
+		}
+		
+		
+	}
+}
+
